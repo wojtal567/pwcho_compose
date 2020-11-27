@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+ apache:
+  build: apache/
+  volumes:
+   - ./source/:/usr/local/apache2/htdocs
+  ports:
+   - "6666:80"
+  networks:
+   - backend
+   - frontend
+  depends_on:
+   - php   
+   - mysql
+ php:
+  build: php/
+  ports:
+   - "9000:9000"  
+  networks:
+   - backend
+  volumes:
+   - ./source/:/var/www/html/
+ mysql:
+  build:
+   context: ./mysql
+   dockerfile: Dockerfile.debian
+  restart: always
+  environment:
+   MYSQL_ROOT_PASSWORD: "admin123"
+  ports:
+   - "3306:3306"
+  networks:
+   - backend
+  command: --default-authentication-plugin=mysql_native_password
+networks:
+ backend:
+ frontend:
+    
